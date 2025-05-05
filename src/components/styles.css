@@ -1,0 +1,83 @@
+.home-container {
+  background-color: rgb(255, 255, 255, 1);
+  box-sizing: border-box;
+  padding: 20px 16px;
+}
+.adr-card {
+  line-height: 1.5rem;
+  background-color: rgb(240, 244, 254);
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  min-height: 30vh;
+}
+.adr-center {
+  text-align: center;
+}
+.adr-index {
+  font-weight: 600;
+}
+.adr-primary-text {
+  font-weight: 600;
+  font-size: 1.275rem;
+}
+.adr-ul {
+  padding-left: 16px;
+}
+.adr-button {
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  height: 2.5rem;
+  cursor: pointer;
+  border: 0 solid #e5e7eb;
+  box-sizing: border-box;
+  color: #ffffff;
+  background-color: #0f172a;
+}
+.btn-full {
+  width: 100%;
+}
+.btn-outline {
+  color: #0f172a;
+  background-color: #ffffff;
+  border: 2px solid #0f172a;
+}
+.adr-button-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.adr-row {
+  margin-bottom: 0.75rem;
+}
+.adr-divider {
+  height: 1px;
+  width: calc(100% - 3rem);
+  background-color: #0f172a;
+  margin: 1.5rem 1.5rem;
+  border-radius: 1px;
+  box-sizing: border-box;
+}
+.adr-menu {
+  padding-left: 2.5rem;
+  padding-right: 2.5rem;
+  height: 3rem;
+  background-color: rgb(15, 23, 42, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  box-sizing: border-box;
+}
+.adr-menu-icon {
+  width: 26px;
+  height: 26px;
+}
