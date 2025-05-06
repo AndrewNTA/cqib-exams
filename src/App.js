@@ -3,19 +3,20 @@ import { Home } from './components/Home';
 import { useLazyQuery, gql } from '@apollo/client';
 import { Menu } from './components/Menu';
 
-const WORDS_QUERY = gql`
-  query Words($skip: Int) {
-    words(first: 100, skip: $skip) {
+const QUESTIONS_QUERY = gql`
+  query Questions($skip: Int) {
+    questions(first: 100, skip: $skip) {
       id
-      englishText
-      vietnamText
-      englishExample
-      vietnamExample
-      wordType
-      pronounce
-      relatedWords
-      isRemembered
-      isInterested
+      questionText
+      questionTranslate
+      answers {
+        ... on Answer {
+          value
+          label
+          labelTranslate
+        }
+      }
+      correctAnswer
     }
   }
 `;
@@ -26,37 +27,37 @@ export const INTERESTED_TAB = 'interested';
 export const PRACTICE_TAB = 'practice';
 
 export const AppContext = React.createContext({
-  words: null,
+  questions: null,
   tab: null,
-  updateWords: () => {},
+  updateQuestions: () => {},
 });
 
 function App() {
   const skipNumber = useRef(null);
   // Flag to check should add to product list
   const flag = useRef(null);
-  const [getWords, { data }] = useLazyQuery(WORDS_QUERY);
-  const [words, setWords] = useState([]);
+  const [getQuestions, { data }] = useLazyQuery(QUESTIONS_QUERY);
+  const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [tab, setTab] = useState(HOME_TAB);
 
   useEffect(() => {
-    if (!skipNumber.current && words.length === 0) {
+    if (!skipNumber.current && questions.length === 0) {
       setLoading(true);
-      getWords({
+      getQuestions({
         variables: { skip: 0 },
       });
       flag.current = true;
       skipNumber.current = 100;
     }
-    if (flag.current && data?.words.length) {
+    if (flag.current && data?.questions.length) {
       setLoading(false);
-      const newWords = [...words, ...data.words];
-      setWords(newWords);
+      const newQuestions = [...questions, ...data.questions];
+      setQuestions(newQuestions);
       flag.current = false;
     }
-    if (Boolean(skipNumber.current) && data?.words.length === 100) {
-      getWords({
+    if (Boolean(skipNumber.current) && data?.questions.length === 100) {
+      getQuestions({
         variables: {
           skip: skipNumber.current,
         },
@@ -64,7 +65,7 @@ function App() {
       skipNumber.current = skipNumber.current + 100;
       flag.current = true;
     }
-  }, [data?.words, getWords, words]);
+  }, [data?.questions, getQuestions, questions]);
 
   const handleChangeTab = (selectedTab) => {
     setTab(selectedTab);
@@ -77,9 +78,9 @@ function App() {
     <div className="App">
       <AppContext.Provider
         value={{
-          words,
+          questions,
           tab,
-          updateWords: (newWords) => setWords(newWords),
+          updateQuestions: (newQuestions) => setQuestions(newQuestions),
         }}
       >
         <Home />
