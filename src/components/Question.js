@@ -44,6 +44,7 @@ export const Question = ({
               control={<Radio />}
               label={displayedAnswer}
               onClick={() => onSelect(questionId, a.value)}
+              sx={{ marginBottom: 1 }}
             />
           );
         })}
