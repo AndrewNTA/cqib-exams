@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Home } from './components/Home';
+import { QuestionView } from './components/QuestionView';
 import { useLazyQuery, gql } from '@apollo/client';
 import { Menu } from './components/Menu';
 
@@ -83,7 +83,7 @@ function App() {
           updateQuestions: (newQuestions) => setQuestions(newQuestions),
         }}
       >
-        <Home />
+        <QuestionView />
         <Menu onChange={handleChangeTab} />
       </AppContext.Provider>
     </div>

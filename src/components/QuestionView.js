@@ -11,7 +11,7 @@ import './styles.css';
 import { AppContext, INTERESTED_TAB, REMEMBERED_TAB } from '../App';
 import { Question } from './Question';
 
-export function Home() {
+export function QuestionView() {
   const [index, setIndex] = useState(0);
   const [showTranslate, setShowTranslate] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
