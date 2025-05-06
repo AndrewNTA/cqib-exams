@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { QuestionView } from './components/QuestionView';
+import { ExamView } from './components/ExamView';
 import { useLazyQuery, gql } from '@apollo/client';
-import { Menu } from './components/Menu';
+import { Home } from './components/Home';
 
 const QUESTIONS_QUERY = gql`
   query Questions($skip: Int) {
@@ -21,15 +21,11 @@ const QUESTIONS_QUERY = gql`
   }
 `;
 
-export const HOME_TAB = 'home';
-export const REMEMBERED_TAB = 'remembered';
-export const INTERESTED_TAB = 'interested';
-export const PRACTICE_TAB = 'practice';
+export const HOME_VIEW = 'home_view';
+export const EXAM_VIEW = 'exam_view';
 
 export const AppContext = React.createContext({
   questions: null,
-  tab: null,
-  updateQuestions: () => {},
 });
 
 function App() {
@@ -39,7 +35,9 @@ function App() {
   const [getQuestions, { data }] = useLazyQuery(QUESTIONS_QUERY);
   const [questions, setQuestions] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [tab, setTab] = useState(HOME_TAB);
+  const [view, setView] = useState(HOME_VIEW);
+  const [startIndex, setStartIndex] = useState(0);
+  const [endIndex, setEndIndex] = useState(0);
 
   useEffect(() => {
     if (!skipNumber.current && questions.length === 0) {
@@ -67,8 +65,24 @@ function App() {
     }
   }, [data?.questions, getQuestions, questions]);
 
-  const handleChangeTab = (selectedTab) => {
-    setTab(selectedTab);
+  const handleTakeExam = (start, end) => {
+    setView(EXAM_VIEW);
+    setStartIndex(start);
+    setEndIndex(end);
+  };
+
+  const handleGoHome = () => {
+    setView(HOME_VIEW);
+    setStartIndex(0);
+    setEndIndex(0);
+  };
+
+  const renderView = () => {
+    if (view === EXAM_VIEW)
+      return (
+        <ExamView start={startIndex} end={endIndex} onGoHome={handleGoHome} />
+      );
+    return <Home onTakeExam={handleTakeExam} />;
   };
 
   if (loading) {
@@ -79,12 +93,9 @@ function App() {
       <AppContext.Provider
         value={{
           questions,
-          tab,
-          updateQuestions: (newQuestions) => setQuestions(newQuestions),
         }}
       >
-        <QuestionView />
-        <Menu onChange={handleChangeTab} />
+        {renderView()}
       </AppContext.Provider>
     </div>
   );

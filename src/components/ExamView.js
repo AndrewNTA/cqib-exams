@@ -1,30 +1,25 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  useRef,
-} from 'react';
+import React, { useContext, useMemo, useState } from 'react';
 import { Alert, Button, Divider } from '@mui/material';
 import './styles.css';
-import { AppContext, INTERESTED_TAB, REMEMBERED_TAB } from '../App';
+import { AppContext } from '../App';
 import { Question } from './Question';
 
-export function QuestionView() {
+const checkResult = (allQuestions, capturedAnswer) => {
+  return allQuestions.reduce((ass, cur) => {
+    if (capturedAnswer[cur.id] === cur.correctAnswer) {
+      return ass + 1;
+    }
+    return ass;
+  }, 0);
+};
+
+export function ExamView({ start, end, onGoHome }) {
   const [index, setIndex] = useState(0);
   const [showTranslate, setShowTranslate] = useState(false);
   const [showAnswer, setShowAnswer] = useState(false);
   const [capturedAnswer, setCapturedAnswer] = useState({});
-  const { questions, tab } = useContext(AppContext);
-  const currentTab = useRef(null);
-
-  useEffect(() => {
-    if (tab !== currentTab.current) {
-      currentTab.current = tab;
-      setIndex(0);
-    }
-  }, [tab]);
+  const [result, setResult] = useState(null);
+  const { questions } = useContext(AppContext);
 
   const goNext = () => {
     setIndex(() => index + 1);
@@ -52,17 +47,16 @@ export function QuestionView() {
     setShowAnswer((showAnswer) => !showAnswer);
   };
 
-  const getQuestionList = useCallback(() => {
-    if (tab === REMEMBERED_TAB) {
-      return questions.filter((w) => w.isRemembered);
-    }
-    if (tab === INTERESTED_TAB) {
-      return questions.filter((w) => w.isInterested);
-    }
-    return questions;
-  }, [tab, questions]);
+  const handleSubmit = () => {
+    const yourResult = checkResult(filterQuestions, capturedAnswer);
+    setResult(yourResult);
+  };
 
-  const filterQuestions = useMemo(() => getQuestionList(), [getQuestionList]);
+  const filterQuestions = useMemo(() => {
+    const allQuestion = questions ?? [];
+    return allQuestion.slice(start, end);
+  }, [questions, start, end]);
+
   const currentQuestion = filterQuestions[index];
 
   const renderAlert = () => {
@@ -80,12 +74,40 @@ export function QuestionView() {
     );
   };
 
+  const renderResult = () => {
+    const score = ((result / filterQuestions.length) * 100).toFixed(2);
+    const message = `Your score is ${score} (${result} / ${filterQuestions.length})`;
+    if (score >= 75)
+      return (
+        <div style={{ marginBottom: 16 }}>
+          <Alert severity="success">{`Passed! ${message}`}</Alert>
+        </div>
+      );
+    return (
+      <div style={{ marginBottom: 16 }}>
+        <Alert severity="error">{`Failed! ${message}`}</Alert>
+      </div>
+    );
+  };
+
   if (
     !Boolean(filterQuestions) ||
     !filterQuestions.length ||
     !currentQuestion
   ) {
-    return <p className="adr-center">No data found!!!</p>;
+    return (
+      <div style={{ padding: '20px 16px' }}>
+        <p className="adr-center">No data found!!!</p>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ marginTop: 2 }}
+          onClick={onGoHome}
+        >
+          Back to Home page
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -101,11 +123,15 @@ export function QuestionView() {
           onSelect={handleSelect}
         />
       </div>
-      {showAnswer && renderAlert()}
+      {(result !== null || showAnswer) && renderAlert()}
+      {result !== null && renderResult()}
       <div className="adr-button-group">
         <Button variant="outlined" disabled={index === 0} onClick={goBack}>
           Prev
         </Button>
+        <div className="adr-index-total">
+          {`${index + 1} / ${filterQuestions.length}`}
+        </div>
         <Button
           variant="contained"
           disabled={index === filterQuestions.length - 1}
@@ -131,6 +157,22 @@ export function QuestionView() {
           onClick={handleCheckAnswer}
         >
           Check answer
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ marginTop: 2 }}
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{ marginTop: 2 }}
+          onClick={onGoHome}
+        >
+          Back to Home page
         </Button>
       </div>
     </div>
