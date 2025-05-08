@@ -6,27 +6,27 @@ const listExam = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 const getStartEndIndex = (key) => {
   switch (key) {
     case 1:
-      return [0, 59];
+      return [0, 60];
     case 2:
-      return [60, 119];
+      return [60, 120];
     case 3:
-      return [120, 179];
+      return [120, 180];
     case 4:
-      return [180, 239];
+      return [180, 240];
     case 5:
-      return [240, 299];
+      return [240, 300];
     case 6:
-      return [300, 359];
+      return [300, 360];
     case 7:
-      return [360, 419];
+      return [360, 420];
     case 8:
-      return [420, 479];
+      return [420, 480];
     case 9:
-      return [480, 539];
+      return [480, 540];
     case 10:
-      return [540, 599];
+      return [540, 600];
     default:
-      return [0, 59];
+      return [0, 60];
   }
 };
 export const Home = ({ onTakeExam }) => {
